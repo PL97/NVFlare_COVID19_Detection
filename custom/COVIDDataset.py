@@ -4,17 +4,17 @@ import pandas as pd
 from torchvision import datasets, models, transforms
 from torch.utils.data import Dataset
 import torch
-
+import os
 
 
 class COVIDDataset(Dataset):
-    def __init__(self, df, root_dir, mode="train", args=None):
+    def __init__(self, root_dir, mode="train"):
         assert mode in ['train', 'val'], "invalid mode"
-        self.path = list(df['path'])
+        df = pd.read_csv(os.path.join(root_dir, "{}.csv".format(mode)))
+        self.path = list(df['square path'])
         self.label = df['label']
         self.root_dir = root_dir
         self.mode = mode
-        self.args = args
 
         self.transform = {
         "train": transforms.Compose([
@@ -31,13 +31,10 @@ class COVIDDataset(Dataset):
         ])}
 
     def __getitem__(self, index):
-        p = self.root_dir + self.path[index]
+        p = self.path[index]
         img = Image.open(p).convert("RGB")
         label = self.label[index]
-        if (self.args is not None) and (self.args.model == "clip_resnet50" or self.args.model == "bit_resnet50"):
-            img = self.args.preprocess(img)
-        else:
-            img = self.transform[self.mode](img)
+        img = self.transform[self.mode](img)
         return img, label
 
     def __len__(self):
@@ -48,9 +45,8 @@ if __name__ == "__main__":
 
     # pass    
 
-    df = pd.read_csv("/home/le/BIMCV/1/train.csv")
     # # test case
-    dl = BIMCV(df, root_dir="/home/le/BIMCV/crop/")
+    dl = COVIDDataset(root_dir="/datadrive/new_png/public/clean/1/", mode='train')
     for img, label in dl:
         print(img.shape, label)
         asdf
