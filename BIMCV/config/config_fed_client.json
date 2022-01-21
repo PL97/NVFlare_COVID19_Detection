@@ -8,7 +8,8 @@
         "path": "cifar10trainer.Cifar10Trainer",
         "args": {
           "lr": 0.01,
-          "epochs": 1
+          "epochs": 1,
+          "path": "/datadrive/new_png/public/clean/1/"
         }
       }
     },

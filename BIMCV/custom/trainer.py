@@ -22,7 +22,7 @@ from COVIDDataset import COVIDDataset
 
 class Cifar10Trainer(Executor):
     
-    def __init__(self, lr=0.01, epochs=5, train_task_name=AppConstants.TASK_TRAIN,
+    def __init__(self, lr=0.01, epochs=5, path="./data/", train_task_name=AppConstants.TASK_TRAIN,
                  submit_model_task_name=AppConstants.TASK_SUBMIT_MODEL, exclude_vars=None):
         """Cifar10 Trainer handles train and submit_model tasks. During train_task, it trains a
         simple network on CIFAR10 dataset. For submit_model task, it sends the locally trained model
@@ -41,6 +41,7 @@ class Cifar10Trainer(Executor):
         self._train_task_name = train_task_name
         self._submit_model_task_name = submit_model_task_name
         self._exclude_vars = exclude_vars
+        self.path = path
 
         # Training setup
         self.model = Des121()
@@ -50,7 +51,7 @@ class Cifar10Trainer(Executor):
         self.optimizer = SGD(self.model.parameters(), lr=lr, momentum=0.9)
         
         ## build customized dataset
-        self._train_dataset = COVID19Dataset(root='~/data', mode='train')
+        self._train_dataset = COVID19Dataset(root=self.path, mode='train')
         self._train_loader = DataLoader(self._train_dataset, batch_size=4, shuffle=True)
         self._n_iterations = len(self._train_loader)
 
